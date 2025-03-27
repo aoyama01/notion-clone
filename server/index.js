@@ -4,9 +4,17 @@ const app = express();
 exports.app = app;
 const PORT = 5000;
 require("dotenv").config();
+const cors = require("cors");
+
+// クライアントのオリジンを許可
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 
 app.use(express.json()); // JSONの受け取り設定
-app.use("/api/v1", require("./src/v1/routes/auth"));
+app.use("/api/v1", require("./src/v1/routes"));
 
 // MongoDBへの接続
 try {
