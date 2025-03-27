@@ -1,7 +1,7 @@
 import axiosClient from "./axiosClient";
 
 const authApi = {
-  register: (params) => axiosClient.post("auth/regiter", params),
+  register: (params) => axiosClient.post("auth/register", params),
 };
 
 export default authApi;
