@@ -8,9 +8,9 @@ import {
 } from "@mui/material";
 import LogoutOutLinedIcon from "@mui/icons-material/LogoutOutlined";
 import AddBoxOutLinedIcon from "@mui/icons-material/AddBoxOutlined";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import assets from "../../assets";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import memoApi from "../../api/memoApi";
 import { setMemo } from "../../redux/features/memoSlice";
@@ -18,6 +18,8 @@ import { setMemo } from "../../redux/features/memoSlice";
 const Sidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { memoId } = useParams();
+  const [active, setActive] = useState(0);
 
   const user = useSelector((state) => state.user.value);
   // user は以下のようなオブジェクト
@@ -48,6 +50,11 @@ const Sidebar = () => {
     };
     getMemos(); // メモの取得を実行
   }, [dispatch]);
+
+  useEffect(() => {
+    const activeIndex = memos.findIndex((e) => e._id === memoId);
+    setActive(activeIndex);
+  }, [navigate]); // navigateにすることで，メモをクリックするたびに発火する
 
   return (
     <Drawer
@@ -120,6 +127,7 @@ const Sidebar = () => {
             component={Link}
             to={`/memo/${item._id}`} // メモの固有ID
             key={item._id}
+            selected={index === active}
           >
             <Typography>
               {item.icon} {item.title}
