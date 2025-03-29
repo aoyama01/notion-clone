@@ -16,3 +16,13 @@ exports.create = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
+exports.getAllMemo = async (req, res) => {
+  try {
+    const memos = await Memo.find({ user: req.user._id }).sort("-position"); // ユーザーのメモを取得
+    res.status(200).json(memos); // 成功したらjson形式のメモを返す
+  } catch (error) {
+    console.error("[メモ作成失敗]", error);
+    res.status(500).json(error);
+  }
+};
