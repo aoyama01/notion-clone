@@ -30,9 +30,9 @@ exports.getAll = async (req, res) => {
 
 // ユーザーの特定のメモを取得するAPI
 exports.getOne = async (req, res) => {
-  const memoId = req.params; // URLからメモのIDを取得(プレースホルダを取得)
+  const memoId = req.params.memoId; // URLからメモのIDを取得(プレースホルダを取得)
   try {
-    const memo = Memo.findOne({ user: req.user._id, _id: memoId }); // 特定のユーザーの特定のメモを取得
+    const memo = await Memo.findOne({ user: req.user._id, _id: memoId }); // 特定のユーザーの特定のメモを取得
     if (!memo) {
       return res.status(404).json({ message: "メモが存在しません" });
     }
