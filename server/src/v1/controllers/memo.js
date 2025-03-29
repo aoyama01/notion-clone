@@ -41,3 +41,27 @@ exports.getOne = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
+exports.update = async (req, res) => {
+  const memoId = req.params.memoId; // URLからメモのIDを取得(プレースホルダを取得)
+  const { title, description } = req.body;
+
+  try {
+    if (title === "") req.body.title = "無題";
+    if (description === "")
+      req.body.description = "ここに自由に記入して下さい．";
+
+    const memo = await Memo.findOne({ user: req.user._id, _id: memoId }); // 特定のユーザーの特定のメモを取得
+    if (!memo) {
+      return res.status(404).json({ message: "メモが存在しません" });
+    }
+
+    const updatedMemo = await Memo.findByIdAndUpdate(memoId, {
+      $set: req.body, // もろもろのパラメータの更新
+    });
+
+    res.status(200).json(updatedMemo); // 成功したらjson形式のメモを返す
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
