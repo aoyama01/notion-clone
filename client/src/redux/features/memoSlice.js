@@ -9,7 +9,7 @@ export const memoSlice = createSlice({
   initialState,
   reducers: {
     setMemo: (state, action) => {
-      state.value = action.payload; // action.payloadはユーザ情報
+      state.value = action.payload; // action.payloadはメモ
     },
   },
 });

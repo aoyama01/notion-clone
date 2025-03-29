@@ -47,7 +47,7 @@ const Sidebar = () => {
       }
     };
     getMemos(); // メモの取得を実行
-  }, []);
+  }, [dispatch]);
 
   return (
     <Drawer
@@ -113,13 +113,19 @@ const Sidebar = () => {
             </IconButton>
           </Box>
         </ListItemButton>
-        <ListItemButton
-          sx={{ paddingLeft: "30px" }}
-          component={Link}
-          to="/memo/4123ih5i43h5" // メモの固有ID
-        >
-          <Typography>📝仮置きのメモ</Typography>
-        </ListItemButton>
+
+        {memos.map((item, index) => (
+          <ListItemButton
+            sx={{ paddingLeft: "30px" }}
+            component={Link}
+            to={`/memo/${item._id}`} // メモの固有ID
+            key={item._id}
+          >
+            <Typography>
+              {item.icon} {item.title}
+            </Typography>
+          </ListItemButton>
+        ))}
       </List>
     </Drawer>
   );
