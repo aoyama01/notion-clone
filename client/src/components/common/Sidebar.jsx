@@ -8,17 +8,16 @@ import {
 } from "@mui/material";
 import LogoutOutLinedIcon from "@mui/icons-material/LogoutOutlined";
 import AddBoxOutLinedIcon from "@mui/icons-material/AddBoxOutlined";
-import React from "react";
+import React, { useEffect } from "react";
 import assets from "../../assets";
 import { useNavigate, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import memoApi from "../../api/memoApi";
+import { setMemo } from "../../redux/features/memoSlice";
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const logout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
 
   const user = useSelector((state) => state.user.value);
   // user は以下のようなオブジェクト
@@ -29,6 +28,26 @@ const Sidebar = () => {
         __v: 0
       } 
    */
+  const memos = useSelector((state) => state.memo.value); // memoはReduxに保存されたメモの情報
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
+  useEffect(() => {
+    const getMemos = async () => {
+      try {
+        const res = await memoApi.getAll(); // memoApiはaxiosで作成したAPI
+        console.log(res);
+        dispatch(setMemo(res)); // 作成したメモの情報をReduxに保存
+        console.log(memos); // Reduxに保存されたメモの情報を表示
+      } catch (error) {
+        alert(error.response?.data?.message || "メモの取得に失敗しました");
+      }
+    };
+    getMemos(); // メモの取得を実行
+  }, []);
 
   return (
     <Drawer
