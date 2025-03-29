@@ -17,12 +17,27 @@ exports.create = async (req, res) => {
   }
 };
 
-exports.getAllMemo = async (req, res) => {
+// 全てのメモを取得するAPI
+exports.getAll = async (req, res) => {
   try {
     const memos = await Memo.find({ user: req.user._id }).sort("-position"); // ユーザーのメモを取得
     res.status(200).json(memos); // 成功したらjson形式のメモを返す
   } catch (error) {
     console.error("[メモ作成失敗]", error);
+    res.status(500).json(error);
+  }
+};
+
+// ユーザーの特定のメモを取得するAPI
+exports.getOne = async (req, res) => {
+  const memoId = req.params; // URLからメモのIDを取得(プレースホルダを取得)
+  try {
+    const memo = Memo.findOne({ user: req.user._id, _id: memoId }); // 特定のユーザーの特定のメモを取得
+    if (!memo) {
+      return res.status(404).json({ message: "メモが存在しません" });
+    }
+    res.status(200).json(memo); // 成功したらjson形式のメモを返す
+  } catch (error) {
     res.status(500).json(error);
   }
 };
