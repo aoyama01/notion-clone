@@ -11,6 +11,7 @@ import AddBoxOutLinedIcon from "@mui/icons-material/AddBoxOutlined";
 import React from "react";
 import assets from "../../assets";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -18,6 +19,17 @@ const Sidebar = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
+
+  const user = useSelector((state) => state.user.value);
+  // user は以下のようなオブジェクト
+  /*  {
+        _id: "...",
+        username: "...",
+        password: "...",
+        __v: 0
+      } 
+   */
+
   return (
     <Drawer
       container={window.document.body}
@@ -42,7 +54,7 @@ const Sidebar = () => {
             }}
           >
             <Typography variant="body2" fontWeight="700">
-              shincode
+              {user.username}
             </Typography>
             <IconButton onClick={logout}>
               <LogoutOutLinedIcon />
