@@ -41,9 +41,7 @@ const Sidebar = () => {
     const getMemos = async () => {
       try {
         const res = await memoApi.getAll(); // memoApiはaxiosで作成したAPI
-        console.log(res);
         dispatch(setMemo(res)); // 作成したメモの情報をReduxに保存
-        console.log(memos); // Reduxに保存されたメモの情報を表示
       } catch (error) {
         alert(error.response?.data?.message || "メモの取得に失敗しました");
       }
