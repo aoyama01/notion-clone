@@ -47,17 +47,16 @@ const Memo = () => {
 
   const updateTitle = async (e) => {
     clearTimeout(timer);
+    // ページタイトルを更新(useState)
     const newTitle = e.target.value;
     setTitle(newTitle);
-    console.log(newTitle);
-    // サイドバーを更新
-    // memosのidが一致するやつを探して，そのタイトルを変更
-    // memos[memoIndex].title = newTitle; // イミュータブルだからこれはだめ
+    // console.log(newTitle);
+    // サイドバーも更新(Redux)
     const updatedMemos = memos.map((memo) =>
       memo._id === memoId ? { ...memo, title: newTitle } : memo
     );
     dispatch(setMemo(updatedMemos));
-
+    // DBの内容も更新(API)
     timer = setTimeout(async () => {
       try {
         await memoApi.update(memoId, { title: newTitle });
@@ -69,9 +68,10 @@ const Memo = () => {
 
   const updateDescription = async (e) => {
     clearTimeout(timer);
+    // ページ内容を更新(useState)
     const newDescription = e.target.value;
     setDescription(newDescription);
-
+    // DBの内容も更新(API)
     timer = setTimeout(async () => {
       try {
         await memoApi.update(memoId, { description: newDescription });
@@ -83,18 +83,19 @@ const Memo = () => {
 
   const deleteMemo = async () => {
     try {
+      // DBの内容を更新(API)
       const deletedMemo = await memoApi.delete(memoId);
-      console.log(deletedMemo); // 削除したメモの情報を表示
+      // console.log(deletedMemo); // 削除したメモの情報を表示
 
+      // サイドバーの更新
       const newMemos = memos.filter((e) => e._id !== memoId);
+      dispatch(setMemo(newMemos));
       // リダイレクト
       if (newMemos.length === 0) {
         navigate("/memo");
       } else {
         navigate(`/memo/${newMemos[0]._id}`);
       }
-      // サイドバーの更新
-      dispatch(setMemo(newMemos));
     } catch (error) {
       alert(error);
     }
