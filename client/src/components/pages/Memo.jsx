@@ -14,11 +14,16 @@ import { useEffect } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import memoApi from "../../api/memoApi";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setMemo } from "../../redux/features/memoSlice";
 
 const Memo = () => {
   const { memoId } = useParams();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const dispatch = useDispatch();
+  const memos = useSelector((state) => state.memo.value);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getMemo = async () => {
@@ -65,6 +70,25 @@ const Memo = () => {
     }, timeout); // timeoutミリ秒ごとに発火する
   };
 
+  const deleteMemo = async () => {
+    try {
+      const deletedMemo = await memoApi.delete(memoId);
+      console.log(deletedMemo); // 削除したメモの情報を表示
+
+      const newMemos = memos.filter((e) => e._id !== memoId);
+      // リダイレクト
+      if (newMemos.length === 0) {
+        navigate("/memo");
+      } else {
+        navigate(`/memo/${newMemos[0]._id}`);
+      }
+      // サイドバーの更新
+      dispatch(setMemo(newMemos));
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   return (
     <>
       <Box
@@ -78,7 +102,7 @@ const Memo = () => {
         <IconButton>
           <StarBorderOutlinedIcon />
         </IconButton>
-        <IconButton variant="outlinerd" color="error">
+        <IconButton variant="outlinerd" color="error" onClick={deleteMemo}>
           <DeleteOutlinedIcon />
         </IconButton>
       </Box>

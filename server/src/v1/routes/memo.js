@@ -15,4 +15,8 @@ router.get("/:memoId", tokenHandler.verifyToken, memoController.getOne);
 // ログインしているユーザーが投稿したメモを1つ更新
 router.put("/:memoId", tokenHandler.verifyToken, memoController.update);
 
+// ログインしているユーザーが投稿したメモを1つ削除
+// DELETEメソッドを受け取った場合の処理
+router.delete("/:memoId", tokenHandler.verifyToken, memoController.delete);
+
 module.exports = router;
