@@ -54,6 +54,19 @@ const Sidebar = () => {
     setActive(activeIndex);
   }, [navigate]); // navigateにすることで，メモをクリックするたびに発火する
 
+  const addMemo = async () => {
+    try {
+      const res = await memoApi.create(); // memoApiはaxiosで作成したAPI
+      // サイドバーを更新
+      const newMemos = [res, ...memos];
+      dispatch(setMemo(newMemos));
+      console.log(res); // 作成したメモの情報を表示
+      navigate(`/memo/${res._id}`); // 作成したメモの詳細ページに遷移
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   return (
     <Drawer
       container={window.document.body}
@@ -113,7 +126,7 @@ const Sidebar = () => {
             <Typography variant="body2" fontWeight="700">
               プライベート
             </Typography>
-            <IconButton>
+            <IconButton onClick={addMemo}>
               <AddBoxOutLinedIcon fontSize="small" />
             </IconButton>
           </Box>
