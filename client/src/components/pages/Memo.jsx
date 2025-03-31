@@ -100,6 +100,22 @@ const Memo = () => {
     }
   };
 
+  const onIconChange = async (newIcon) => {
+    // ページアイコンを更新(useState)
+    setIcon(newIcon);
+    // サイドバーも更新(Redux)
+    const updatedMemos = memos.map((memo) =>
+      memo._id === memoId ? { ...memo, icon: newIcon } : memo
+    );
+    dispatch(setMemo(updatedMemos));
+    // DBの内容も更新(API)
+    try {
+      await memoApi.update(memoId, { icon: newIcon });
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   return (
     <>
       <Box
@@ -119,7 +135,7 @@ const Memo = () => {
       </Box>
       <Box sx={{ padding: "10px 50px" }}>
         <Box>
-          <EmojiPicker icon={icon} />
+          <EmojiPicker icon={icon} setIcon={setIcon} onChange={onIconChange} />
           <TextField
             onChange={(e) => {
               updateTitle(e);
