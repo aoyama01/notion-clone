@@ -55,12 +55,15 @@ exports.update = async (req, res) => {
     const memo = await Memo.findOne({ user: req.user._id, _id: memoId }); // 特定のユーザーの特定のメモを取得
     if (!memo) return res.status(404).json({ message: "メモが存在しません" });
 
-    const updatedMemo = await Memo.findByIdAndUpdate(memoId, {
-      $set: req.body, // もろもろのパラメータの更新
-    });
+    const updatedMemo = await Memo.findByIdAndUpdate(
+      memoId,
+      { $set: req.body }, // もろもろのパラメータの更新
+      { returnDocument: "after" }
+    ); // 更新後のデータを返すように設定(デフォルトの戻り値は更新前のデータ)
 
     res.status(200).json(updatedMemo); // 成功したらjson形式のメモを返す
   } catch (error) {
+    console.log(error);
     res.status(500).json(error);
   }
 };

@@ -46,6 +46,14 @@ const Memo = () => {
     clearTimeout(timer);
     const newTitle = e.target.value;
     setTitle(newTitle);
+    console.log(newTitle);
+    // サイドバーを更新
+    // memosのidが一致するやつを探して，そのタイトルを変更
+    // memos[memoIndex].title = newTitle; // イミュータブルだからこれはだめ
+    const updatedMemos = memos.map((memo) =>
+      memo._id === memoId ? { ...memo, title: newTitle } : memo
+    );
+    dispatch(setMemo(updatedMemos));
 
     timer = setTimeout(async () => {
       try {
