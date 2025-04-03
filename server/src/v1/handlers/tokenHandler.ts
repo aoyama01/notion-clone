@@ -47,7 +47,8 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = await User.findById(tokenDecoded.id);
       if (!user) {
-        return res.status(401).json("権限がありません");
+        res.status(401).json("権限がありません");
+        return;
       }
       req.user = user;
       next();
@@ -56,10 +57,12 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
         "ユーザー検索中のエラー:",
         error instanceof Error ? error.message : String(error)
       );
-      return res.status(500).json("サーバーエラーが発生しました");
+      res.status(500).json("サーバーエラーが発生しました");
+      return;
     }
   } else {
-    return res.status(401).json("権限がありません");
+    res.status(401).json("権限がありません");
+    return;
   }
 };
 

@@ -50,7 +50,8 @@ router.post(
   "/verify-token",
   tokenHandler.verifyToken,
   (req: Request, res: Response) => {
-    return res.status(200).json({ user: req.user });
+    res.status(200).json({ user: req.user });
+    return;
   }
 );
 

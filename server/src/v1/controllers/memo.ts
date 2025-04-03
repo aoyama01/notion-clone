@@ -44,7 +44,8 @@ const getOne = async (req: Request, res: Response) => {
   try {
     const memo = await Memo.findOne({ user: req.user?._id, _id: memoId }); // 特定のユーザーの特定のメモを取得
     if (!memo) {
-      return res.status(404).json({ message: "メモが存在しません" });
+      res.status(404).json({ message: "メモが存在しません" });
+      return;
     }
     res.status(200).json(memo); // 成功したらjson形式のメモを返す
   } catch (error) {
@@ -66,7 +67,10 @@ const update = async (
       req.body.description = "ここに自由に記入して下さい．";
 
     const memo = await Memo.findOne({ user: req.user?._id, _id: memoId }); // 特定のユーザーの特定のメモを取得
-    if (!memo) return res.status(404).json({ message: "メモが存在しません" });
+    if (!memo) {
+      res.status(404).json({ message: "メモが存在しません" });
+      return;
+    }
 
     const updatedMemo = await Memo.findByIdAndUpdate(
       memoId,
@@ -87,7 +91,10 @@ const deleteOne = async (req: Request, res: Response) => {
   console.log(`これから消すメモのID: ${memoId}`);
   try {
     const memo = await Memo.findOne({ user: req.user?._id, _id: memoId }); // 特定のユーザーの特定のメモを取得
-    if (!memo) return res.status(404).json({ message: "メモが存在しません" });
+    if (!memo) {
+      res.status(404).json({ message: "メモが存在しません" });
+      return;
+    }
 
     await Memo.deleteOne({ _id: memoId });
     res.status(200).json({ message: "メモが削除されました" });

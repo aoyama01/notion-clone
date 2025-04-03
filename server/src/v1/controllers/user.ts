@@ -34,9 +34,11 @@ const register = async (req: Request, res: Response) => {
         expiresIn: "24h",
       }
     );
-    return res.status(200).json({ user, token });
+    res.status(200).json({ user, token });
+    return;
   } catch (error) {
-    return res.status(500).json(error);
+    res.status(500).json(error);
+    return;
   }
 };
 
@@ -48,7 +50,7 @@ const login = async (req: Request<{}, {}, LoginBody>, res: Response) => {
     // DBからユーザーが存在するか探してくる
     const user = await User.findOne({ username: username });
     if (!user) {
-      return res.status(401).json({
+      res.status(401).json({
         errors: [
           {
             param: "username",
@@ -56,6 +58,7 @@ const login = async (req: Request<{}, {}, LoginBody>, res: Response) => {
           },
         ],
       });
+      return;
     }
 
     // パスワードの照合
@@ -65,7 +68,7 @@ const login = async (req: Request<{}, {}, LoginBody>, res: Response) => {
     );
 
     if (decrytedPassword.toString(CryptoJS.enc.Utf8) !== password) {
-      return res.status(401).json({
+      res.status(401).json({
         errors: [
           {
             param: "password",
@@ -73,6 +76,7 @@ const login = async (req: Request<{}, {}, LoginBody>, res: Response) => {
           },
         ],
       });
+      return;
     }
 
     // JWTの発行
@@ -84,9 +88,11 @@ const login = async (req: Request<{}, {}, LoginBody>, res: Response) => {
       }
     );
 
-    return res.status(201).json({ user, token });
+    res.status(201).json({ user, token });
+    return;
   } catch (error) {
-    return res.status(500).json(error);
+    res.status(500).json(error);
+    return;
   }
 };
 
