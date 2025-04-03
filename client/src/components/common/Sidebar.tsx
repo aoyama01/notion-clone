@@ -14,14 +14,16 @@ import { useNavigate, Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import memoApi from "../../api/memoApi";
 import { setMemo } from "../../redux/features/memoSlice";
+import { RootState } from "../../redux/store";
+import { Memo } from "../../types/memo";
 
-const Sidebar = () => {
+const Sidebar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { memoId } = useParams();
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState<number>(0);
 
-  const user = useSelector((state) => state.user.value);
+  const user = useSelector((state: RootState) => state.user.value);
   // user は以下のようなオブジェクト
   /*  {
         _id: "...",
@@ -30,19 +32,19 @@ const Sidebar = () => {
         __v: 0
       } 
    */
-  const memos = useSelector((state) => state.memo.value); // memoはReduxに保存されたメモの情報
+  const memos = useSelector((state: RootState) => state.memo.value); // memoはReduxに保存されたメモの情報
 
-  const logout = () => {
+  const logout = (): void => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
   useEffect(() => {
-    const getMemos = async () => {
+    const getMemos = async (): Promise<void> => {
       try {
         const res = await memoApi.getAll(); // memoApiはaxiosで作成したAPI
         dispatch(setMemo(res)); // 作成したメモの情報をReduxに保存
-      } catch (error) {
+      } catch (error: any) {
         alert(error.response?.data?.message || "メモの取得に失敗しました");
       }
     };
@@ -52,9 +54,9 @@ const Sidebar = () => {
   useEffect(() => {
     const activeIndex = memos.findIndex((e) => e._id === memoId);
     setActive(activeIndex);
-  }, [navigate]); // navigateにすることで，メモをクリックするたびに発火する
+  }, [memos, memoId, navigate]); // navigateにすることで，メモをクリックするたびに発火する
 
-  const addMemo = async () => {
+  const addMemo = async (): Promise<void> => {
     try {
       const res = await memoApi.create(); // memoApiはaxiosで作成したAPI
       // サイドバーを更新

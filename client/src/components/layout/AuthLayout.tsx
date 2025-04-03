@@ -1,14 +1,14 @@
 import { Container, Box } from "@mui/material";
-import { React, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import notionLogo from "../../assets/images/notion-logo.png";
 import authUtils from "../../utils/authUtils";
 
-const AuthLayout = () => {
+const AuthLayout: React.FC = () => {
   const navigate = useNavigate();
   useEffect(() => {
     // JWTを持っているか確認
-    const checkAuth = async () => {
+    const checkAuth = async (): Promise<void> => {
       // 認証チェック
       const isAuth = await authUtils.isAuthenticated();
       if (isAuth) {

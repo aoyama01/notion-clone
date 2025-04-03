@@ -1,15 +1,14 @@
-import { Container, Box } from "@mui/material";
-import { React, useEffect } from "react";
+import { Box } from "@mui/material";
+import React, { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import notionLogo from "../../assets/images/notion-logo.png";
 import authUtils from "../../utils/authUtils";
 import Sidebar from "../common/Sidebar";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/features/userSlice";
 
-const AppLayout = () => {
+const AppLayout: React.FC = () => {
   const navigate = useNavigate();
-  const dispach = useDispatch();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // JWTを持っているか確認
@@ -20,11 +19,11 @@ const AppLayout = () => {
         navigate("/login"); // ログイン済みの場合はルートディレクトリに遷移
       } else {
         // ユーザー情報を保存する → グローバルで扱えるようになる
-        dispach(setUser(user));
+        dispatch(setUser(user));
       }
     };
     checkAuth();
-  }, [navigate]); // ページ遷移時に発火
+  }, [navigate, dispatch]); // ページ遷移時に発火
 
   return (
     <div>

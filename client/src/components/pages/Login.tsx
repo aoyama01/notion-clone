@@ -1,29 +1,42 @@
 import { Box, Button, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { LoadingButton } from "@mui/lab";
 import { Link, useNavigate } from "react-router-dom";
 import authApi from "../../api/authApi";
 
-const Register = () => {
+interface FormData {
+  username: string;
+  password: string;
+}
+
+interface ErrorResponse {
+  data?: {
+    errors?: Array<{
+      param: string;
+      msg: string;
+    }>;
+  };
+}
+
+const Login: React.FC = () => {
   const navigate = useNavigate(); // ページ遷移用の関数
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     username: "",
     password: "",
-    confirmPassword: "",
   });
 
-  const [usernameErrText, setUsernameErrText] = useState("");
-  const [passwordErrText, setPasswordErrText] = useState("");
-  const [confirmErrText, setConfirmErrText] = useState("");
+  const [usernameErrText, setUsernameErrText] = useState<string>("");
+  const [passwordErrText, setPasswordErrText] = useState<string>("");
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // バリデーションチェックのための正規表現
   const usernameRegex = /^[a-zA-Z0-9_]{8,20}$/;
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+  // const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+  const passwordRegex = /^[A-Za-z\d]{8,}$/;
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({
@@ -50,26 +63,10 @@ const Register = () => {
           setPasswordErrText("パスワードを入力してください");
         } else if (!passwordRegex.test(value)) {
           setPasswordErrText(
-            "パスワードは英字と数字をそれぞれ1文字以上含み，8文字以上の半角英数記号（@$!%*?&）で入力してください"
+            "パスワードは半角英数字を用い，8文字以上にしてください．"
           );
         } else {
           setPasswordErrText("");
-        }
-
-        if (formData.confirmPassword && value !== formData.confirmPassword) {
-          setConfirmErrText("パスワードと確認用パスワードが一致しません");
-        } else {
-          setConfirmErrText("");
-        }
-        break;
-
-      case "confirmPassword":
-        if (value === "") {
-          setConfirmErrText("確認用パスワードを入力してください");
-        } else if (value !== formData.password) {
-          setConfirmErrText("パスワードと確認用パスワードが一致しません");
-        } else {
-          setConfirmErrText("");
         }
         break;
 
@@ -78,16 +75,16 @@ const Register = () => {
     }
   };
 
-  const handleSubmitWithHooks = async (e) => {
+  const handleSubmitWithHooks = async (
+    e: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
 
     setUsernameErrText("");
     setPasswordErrText("");
-    setConfirmErrText("");
 
     const username = formData.username.trim();
     const password = formData.password.trim();
-    const confirmPassword = formData.confirmPassword.trim();
 
     // バリデーション
     let error = false;
@@ -107,16 +104,8 @@ const Register = () => {
       error = true;
     } else if (!passwordRegex.test(password)) {
       setPasswordErrText(
-        "パスワードは英字と数字をそれぞれ1文字以上含み，8文字以上の半角英数記号（@$!%*?&）で入力してください"
+        "パスワードは半角英数字を用い，8文字以上にしてください．"
       );
-      error = true;
-    }
-
-    if (!confirmPassword) {
-      setConfirmErrText("確認用パスワードを入力してください");
-      error = true;
-    } else if (password !== confirmPassword) {
-      setConfirmErrText("パスワードと確認用パスワードが一致しません");
       error = true;
     }
 
@@ -126,27 +115,23 @@ const Register = () => {
 
     // 新規登録APIを叩く
     try {
-      const res = await authApi.register({
+      const res = await authApi.login({
         username,
         password,
-        confirmPassword,
       });
 
       localStorage.setItem("token", res.token);
-      console.log("新規登録に成功しました");
+      console.log("ログインに成功しました");
       navigate("/"); // ルートディレクトリに遷移
     } catch (error) {
-      const errors = error?.data?.errors || [];
+      const errors = (error as ErrorResponse)?.data?.errors || [];
       console.log(errors);
       errors.forEach((err) => {
-        if (err.path === "username") {
+        if (err.param === "username") {
           setUsernameErrText(err.msg);
         }
-        if (err.path === "password") {
+        if (err.param === "password") {
           setPasswordErrText(err.msg);
-        }
-        if (err.path === "confirmPassword") {
-          setConfirmErrText(err.msg);
         }
       });
     } finally {
@@ -184,20 +169,6 @@ const Register = () => {
           error={passwordErrText !== ""}
           disabled={loading}
         />
-        <TextField
-          fullWidth
-          id="confirmPassword"
-          label="確認用パスワード"
-          margin="normal"
-          name="confirmPassword"
-          type="password"
-          required // 入力がないとエラーにする
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          helperText={confirmErrText}
-          error={confirmErrText !== ""}
-          disabled={loading}
-        />
         <LoadingButton
           sx={{ mt: 3, mb: 2 }}
           fullWidth
@@ -206,14 +177,14 @@ const Register = () => {
           color="primary"
           variant="outlined"
         >
-          アカウント作成
+          ログイン
         </LoadingButton>
       </Box>
-      <Button component={Link} to="/login">
-        すでにアカウントを持っていますか？ログイン
+      <Button component={Link} to="/register">
+        アカウントを持っていませんか？新規登録
       </Button>
     </>
   );
 };
 
-export default Register;
+export default Login;
