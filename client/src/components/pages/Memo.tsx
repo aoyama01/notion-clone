@@ -1,5 +1,13 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
 import { Box, IconButton, TextField, Typography } from "@mui/material";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+} from "@mui/material";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { useNavigate, useParams } from "react-router-dom";
@@ -15,6 +23,8 @@ const Memo: React.FC = () => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [icon, setIcon] = useState<string>("");
+  const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
+  const [deleteInput, setDeleteInput] = useState<string>("");
   const dispatch = useDispatch();
   const memos = useSelector((state: RootState) => state.memo.value);
   const navigate = useNavigate();
@@ -101,6 +111,21 @@ const Memo: React.FC = () => {
     }
   };
 
+  const openDeleteDialog = () => {
+    setOpenConfirmDialog(true);
+  };
+
+  const confirmDeleteMemo = async () => {
+    setOpenConfirmDialog(false);
+    setDeleteInput(""); // 入力欄リセット
+    await deleteMemo();
+  };
+
+  const cancelDeleteMemo = () => {
+    setOpenConfirmDialog(false);
+    setDeleteInput(""); // 入力欄リセット
+  };
+
   const onIconChange = async (newIcon: string): Promise<void> => {
     // ページアイコンを更新(useState)
     setIcon(newIcon);
@@ -131,7 +156,7 @@ const Memo: React.FC = () => {
         <IconButton>
           <StarBorderOutlinedIcon />
         </IconButton>
-        <IconButton color="error" onClick={deleteMemo}>
+        <IconButton color="error" onClick={openDeleteDialog}>
           <DeleteOutlinedIcon />
         </IconButton>
       </Box>
@@ -164,6 +189,42 @@ const Memo: React.FC = () => {
           />
         </Box>
       </Box>
+      <Dialog open={openConfirmDialog} onClose={() => {}}>
+        <DialogTitle>メモの削除確認</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            本当にこのメモを削除しますか？
+            <strong>この操作は取り消せません．</strong>
+            <br />
+            削除するには，メモのタイトル「<strong>{title}</strong>
+            」を正確に入力してください．
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="メモのタイトルを入力"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={deleteInput}
+            onChange={(e) => setDeleteInput(e.target.value)}
+            // color="error"
+            color={deleteInput !== title ? "error" : "primary"}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelDeleteMemo} color="primary">
+            キャンセル
+          </Button>
+          <Button
+            onClick={confirmDeleteMemo}
+            color="error"
+            disabled={deleteInput !== title} // タイトルを正しく入力できていない場合は無効
+          >
+            削除する
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
