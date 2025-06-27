@@ -1,55 +1,67 @@
-# Notion クローン開発
+# Notion Clone Development
 
-このリポジトリは, Udemy 講座「[【フルスタック開発】Notion クローンを MERN スタックで本格的に構築する Web アプリケーション開発実践講座](https://www.udemy.com/course/notion-fullstack-webdev/?couponCode=KEEPLEARNING)」を参考に作成した, Notion ライクなメモ管理アプリケーションです. 講師が使用したコードは GitHub 上で Public として公開されています([server](https://github.com/Shin-sibainu/notion-clone-server), [client](https://github.com/Shin-sibainu/notion-clone-client))．本リポジトリではそれらをベースにしつつ, 独自に改変や拡張を行っています.
-
----
-
-## 概要
-
-- **フロントエンド**  
-  React(Vite) + TypeScript を使用しています.
-- **バックエンド**  
-  Node.js(Express) + TypeScript を使用しています.
-- **DB**  
-  Mongoose を用いて MongoDB に接続しています.
-- **認証**  
-  JWT(Json Web Token)によるトークン認証を行っています.
-- **状態管理**  
-  Redux Toolkit を使用し, メモやユーザーの情報を集中的に管理しています.
+This repository is a Notion-like memo management application created based on the Udemy course “[Full-Stack Development: Build a Production-Level Notion Clone Web App with the MERN Stack](https://www.udemy.com/course/notion-fullstack-webdev).”  
+The instructor’s code is publicly available on GitHub ([server](https://github.com/Shin-sibainu/notion-clone-server), [client](https://github.com/Shin-sibainu/notion-clone-client)).  
+This repository builds on that foundation with additional custom modifications and extensions.
 
 ---
 
-## 主な機能
+## Overview
 
-1. **ユーザー認証**
+- **Frontend**
 
-   - 新規登録 (Register)
-   - ログイン / ログアウト
-   - JWT を用いてユーザーを認証
+  Uses React (Vite) + TypeScript.
 
-2. **メモ管理機能**
+- **Backend**
 
-   - 新規メモ作成
-   - メモの一覧表示 / 詳細閲覧
-   - メモの更新 (タイトル, 本文, 絵文字)
-   - メモの削除
+  Uses Node.js (Express) + TypeScript.
 
-3. **サイドバー**
+- **Database**
 
-   - ユーザー名やログアウトボタンが表示されます.
-   - 登録済みのメモをサイドバーで確認.
-   - 絵文字によりメモを簡単に識別可能.
+  Connects to MongoDB via Mongoose.
 
-4. **その他 (今後追加したい機能)**
-   - お気に入り機能: お気に入り設定や並び替え
-   - メモのドラッグ&ドロップ (react-beautiful-dnd 利用など)
-   - テキスト入力時のエフェクト ([Power Mode](https://github.com/hoovercj/vscode-power-mode) のような UX を想定)
+- **Authentication**
+
+  Implements token-based authentication with JWT (JSON Web Token).
+
+- **State Management**
+
+  Uses Redux Toolkit to centrally manage memo and user information.
 
 ---
 
-## 使用技術
+## Main Features
 
-- **フロントエンド**
+1. **User Authentication**
+
+   - User registration
+   - Login / Logout
+   - Authentication via JWT
+
+2. **Memo Management**
+
+   - Create new memos
+   - List and view memo details
+   - Update memos (title, body, emoji)
+   - Delete memos
+
+3. **Sidebar**
+
+   - Displays username and logout button
+   - Shows all saved memos
+   - Allows easy identification of memos with emojis
+
+4. **Other (Planned Features)**
+
+   - Favorites: Mark memos as favorites and sort them
+   - Drag & Drop for memos (e.g., using react-beautiful-dnd)
+   - Typing effects (aiming for a UX similar to [Power Mode](https://github.com/hoovercj/vscode-power-mode))
+
+---
+
+## Technologies Used
+
+- **Frontend**
 
   - [React](https://react.dev/)
   - [Vite](https://vitejs.dev/)
@@ -57,38 +69,41 @@
   - [Redux Toolkit](https://redux-toolkit.js.org/)
   - [Material UI (MUI)](https://mui.com/)
 
-- **バックエンド**
+- **Backend**
 
   - [Node.js](https://nodejs.org/)
   - [Express](https://expressjs.com/)
   - [TypeScript](https://www.typescriptlang.org/)
 
-- **データベース**
+- **Database**
 
   - [MongoDB](https://www.mongodb.com/)
   - [Mongoose](https://mongoosejs.com/)
 
-- **認証**
+- **Authentication**
 
   - [JWT](https://jwt.io/)
 
-- **バリデーション**
+- **Validation**
+
   - [express-validator](https://express-validator.github.io/docs/)
 
 ---
 
-## 環境構築
+## Setup Instructions
 
-### 1. リポジトリのクローン
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/aoyama01/notion-clone
 cd notion-clone
 ```
 
-### 2. 環境変数の設定
+## Setup Instructions
 
-MongoDB 接続情報などを設定するため, server ディレクトリ内に.env ファイルを作成し, 以下のように変数を定義してください.
+### 2. Configure environment variables
+
+To configure MongoDB connection info and other settings, create a `.env` file in the `server` directory and define the variables like this:
 
 ```dotenv
 MONGODB_URL=your_mongodb_connection_string
@@ -96,7 +111,7 @@ SECRET_KEY=any_string_for_password_encryption
 TOKEN_SECRET_KEY=any_string_for_jwt
 ```
 
-### 3. フロントエンドのセットアップ
+### 3. Set up the frontend
 
 ```bash
 cd client
@@ -104,9 +119,9 @@ npm install
 npm run dev
 ```
 
-デフォルトではポート 5173 が使用されます. ブラウザで http://localhost:5173 にアクセスするとアプリを確認できます.
+By default, port 5173 will be used. You can access the app at http://localhost:5173.
 
-### 4. バックエンドのセットアップ
+### 4. Set up the backend
 
 ```bash
 cd ../server
@@ -114,33 +129,27 @@ npm install
 npm run dev
 ```
 
-デフォルトではポート 5000 が使用されます. フロントエンドからは http://localhost:5000/api/v1 を介して API にアクセスできるようになっています.
+By default, port 5000 will be used. The frontend accesses the API via http://localhost:5000/api/v1.
 
----
+## Directory Structure (Partial)
 
-## ディレクトリ構成 (抜粋)
-
-```
+```bash
 .
-├── client            // フロントエンド (React + Vite + TypeScript)
+├── client             // Frontend (React + Vite + TypeScript)
 │   ├── src
 │   ├── public
 │   └── package.json
-├── server            // バックエンド (Express + TypeScript)
+├── server             // Backend (Express + TypeScript)
 │   ├── src
 │   └── package.json
 ├── .gitignore
-└── README.md         // 本ドキュメント
+└── README.md          // This document
 ```
 
----
+## References
 
-## 参考
+[Full-Stack Development: Build a Production-Level Notion Clone Web App with the MERN Stack](https://www.udemy.com/course/notion-fullstack-webdev/?couponCode=KEEPLEARNING)
 
-[【フルスタック開発】Notion クローンを MERN スタックで本格的に構築する Web アプリケーション開発実践講座](https://www.udemy.com/course/notion-fullstack-webdev/?couponCode=KEEPLEARNING)
+[notion-clone-server repository](https://github.com/Shin-sibainu/notion-clone-server)
 
-https://github.com/Shin-sibainu/notion-clone-server
-
-https://github.com/Shin-sibainu/notion-clone-client
-
----
+[notion-clone-client repository](https://github.com/Shin-sibainu/notion-clone-client)
